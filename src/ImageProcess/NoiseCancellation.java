@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 
 public class NoiseCancellation {
 	private BufferedImage inputImg,outputImg;
-	private int[]pixelMatrix=new int[9];
+	private Color[] pixelMatrix=new Color[9];
 
 	public NoiseCancellation(String filename) throws IOException {
 		// TODO Auto-generated constructor stub
@@ -27,15 +27,15 @@ public class NoiseCancellation {
 		System.out.println(width +"   "+height);
 		for (int i = 1; i < width-1; i++) {
 			for (int j = 1; j < height-1; j++) {
-				pixelMatrix[0]=new Color(inputImg.getRGB(i-1,j-1)).getRed();
-				pixelMatrix[1]=new Color(inputImg.getRGB(i-1,j)).getRed();
-				pixelMatrix[2]=new Color(inputImg.getRGB(i-1,j+1)).getRed();
-				pixelMatrix[3]=new Color(inputImg.getRGB(i,j-1)).getRed();
-				pixelMatrix[4]=new Color(inputImg.getRGB(i,j)).getRed();
-				pixelMatrix[5]=new Color(inputImg.getRGB(i,j+1)).getRed();
-				pixelMatrix[6]=new Color(inputImg.getRGB(i+1,j-1)).getRed();
-				pixelMatrix[7]=new Color(inputImg.getRGB(i+1,j)).getRed();
-				pixelMatrix[8]=new Color(inputImg.getRGB(i+1,j+1)).getRed();
+				pixelMatrix[0]=new Color(inputImg.getRGB(i-1,j-1));
+				pixelMatrix[1]=new Color(inputImg.getRGB(i-1,j));
+				pixelMatrix[2]=new Color(inputImg.getRGB(i-1,j+1));
+				pixelMatrix[3]=new Color(inputImg.getRGB(i,j-1));
+				pixelMatrix[4]=new Color(inputImg.getRGB(i,j));
+				pixelMatrix[5]=new Color(inputImg.getRGB(i,j+1));
+				pixelMatrix[6]=new Color(inputImg.getRGB(i+1,j-1));
+				pixelMatrix[7]=new Color(inputImg.getRGB(i+1,j));
+				pixelMatrix[8]=new Color(inputImg.getRGB(i+1,j+1));
 				int edge=convolution(pixelMatrix);
 				outputImg.setRGB(i,j,(edge<<16 | edge<<8 | edge));
 			}
@@ -43,37 +43,43 @@ public class NoiseCancellation {
 		return outputImg;
 	}
 	public BufferedImage medianFilter(){
-		int width = inputImg.getWidth();
-		int height = outputImg.getHeight();
-		System.out.println(width +"   "+height);
-		for (int i = 1; i < width-1; i++) {
-			for (int j = 1; j < height-1; j++) {
-				pixelMatrix[0]=new Color(inputImg.getRGB(i-1,j-1)).getRed();
-				pixelMatrix[1]=new Color(inputImg.getRGB(i-1,j)).getRed();
-				pixelMatrix[2]=new Color(inputImg.getRGB(i-1,j+1)).getRed();
-				pixelMatrix[3]=new Color(inputImg.getRGB(i,j-1)).getRed();
-				pixelMatrix[4]=new Color(inputImg.getRGB(i,j)).getRed();
-				pixelMatrix[5]=new Color(inputImg.getRGB(i,j+1)).getRed();
-				pixelMatrix[6]=new Color(inputImg.getRGB(i+1,j-1)).getRed();
-				pixelMatrix[7]=new Color(inputImg.getRGB(i+1,j)).getRed();
-				pixelMatrix[8]=new Color(inputImg.getRGB(i+1,j+1)).getRed();
-				Arrays.sort(pixelMatrix);
-				int edge = pixelMatrix[4];
-				outputImg.setRGB(i,j,(edge<<16 | edge<<8 | edge));
+		int[] R=new int[9];
+		int[] B=new int[9];
+		int[] G=new int[9];
+		for (int i = 1; i < inputImg.getWidth()-1; i++) {
+			for (int j = 1; j < outputImg.getHeight()-1; j++) {
+				pixelMatrix[0]=new Color(inputImg.getRGB(i-1,j-1));
+				pixelMatrix[1]=new Color(inputImg.getRGB(i-1,j));
+				pixelMatrix[2]=new Color(inputImg.getRGB(i-1,j+1));
+				pixelMatrix[3]=new Color(inputImg.getRGB(i,j-1));
+				pixelMatrix[4]=new Color(inputImg.getRGB(i,j));
+				pixelMatrix[5]=new Color(inputImg.getRGB(i,j+1));
+				pixelMatrix[6]=new Color(inputImg.getRGB(i+1,j-1));
+				pixelMatrix[7]=new Color(inputImg.getRGB(i+1,j));
+				pixelMatrix[8]=new Color(inputImg.getRGB(i+1,j+1));
+				for(int k=0;k<9;k++){
+					R[k]=pixelMatrix[k].getRed();
+					B[k]=pixelMatrix[k].getBlue();
+					G[k]=pixelMatrix[k].getGreen();
+				}
+				Arrays.sort(R);
+				Arrays.sort(G);
+				Arrays.sort(B);
+				outputImg.setRGB(i,j,new Color(R[4],B[4],G[4]).getRGB());
 			}
 		}
 		return outputImg;
 
 	}
-	public int convolution(int[] pixelMatrix){
+	public int convolution(Color[] pixelMatrix){
 		float[] data = {
 				(float)1/9,(float)1/9,(float)1/9,
 				(float)1/9,(float)1/9,(float)1/9,
 				(float)1/9,(float)1/9,(float)1/9,
 		};
-		int g=(int)((pixelMatrix[0]*data[0])+(pixelMatrix[1]*data[1])+(pixelMatrix[2]*data[2])+
-				(pixelMatrix[3]*data[3])+(pixelMatrix[4]*data[4])+(pixelMatrix[5]*data[5])+
-				(pixelMatrix[6]*data[6])+(pixelMatrix[7]*data[7])+(pixelMatrix[8]*data[8]));
+		int g=(int)((pixelMatrix[0].getRed()*data[0])+(pixelMatrix[1].getRed()*data[1])+(pixelMatrix[2].getRed()*data[2])+
+				(pixelMatrix[3].getRed()*data[3])+(pixelMatrix[4].getRed()*data[4])+(pixelMatrix[5].getRed()*data[5])+
+				(pixelMatrix[6].getRed()*data[6])+(pixelMatrix[7].getRed()*data[7])+(pixelMatrix[8].getRed()*data[8]));
 		return g;
 
 	}
