@@ -21,7 +21,7 @@ public class NoiseCancellation {
 		this.outputImg = new BufferedImage(inputImg.getWidth(),inputImg.getHeight(),this.inputImg.TYPE_INT_RGB);
 	}
 	
-	public BufferedImage filterConvolution(){
+	public BufferedImage meanFilter(){
 		int width = inputImg.getWidth();
 		int height = outputImg.getHeight();
 		System.out.println(width +"   "+height);
