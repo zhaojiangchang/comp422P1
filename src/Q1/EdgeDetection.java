@@ -1,4 +1,4 @@
-package ImageProcess;
+package Q1;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

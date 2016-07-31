@@ -1,23 +1,22 @@
-package ImageProcess;
+package Q2;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Kernel;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-public class NoiseCancellation {
+import Q1.NoiseCancellation;
+
+public class MiningImageData {
 	private BufferedImage inputImg,outputImg;
 	private Color[] pixelMatrix=new Color[9];
+	private int thresholder = 200;
 
-	public NoiseCancellation(String filename) throws IOException {
+	public MiningImageData(String filename) throws IOException {
 		// TODO Auto-generated constructor stub
-		this.inputImg = ImageIO.read(NoiseCancellation.class.getResource(filename));
+		this.inputImg = ImageIO.read(MiningImageData.class.getResource(filename));
 		this.outputImg = new BufferedImage(inputImg.getWidth(),inputImg.getHeight(),this.inputImg.TYPE_INT_RGB);
 	}
 	
@@ -37,40 +36,17 @@ public class NoiseCancellation {
 				pixelMatrix[7]=new Color(inputImg.getRGB(i+1,j));
 				pixelMatrix[8]=new Color(inputImg.getRGB(i+1,j+1));
 				int edge=convolution(pixelMatrix);
+				if(edge>thresholder){
+					edge = 255;
+				}else{
+					edge = 0;
+				}
 				outputImg.setRGB(i,j,(edge<<16 | edge<<8 | edge));
 			}
 		}
 		return outputImg;
 	}
-	public BufferedImage medianFilter(){
-		int[] R=new int[9];
-		int[] B=new int[9];
-		int[] G=new int[9];
-		for (int i = 1; i < inputImg.getWidth()-1; i++) {
-			for (int j = 1; j < outputImg.getHeight()-1; j++) {
-				pixelMatrix[0]=new Color(inputImg.getRGB(i-1,j-1));
-				pixelMatrix[1]=new Color(inputImg.getRGB(i-1,j));
-				pixelMatrix[2]=new Color(inputImg.getRGB(i-1,j+1));
-				pixelMatrix[3]=new Color(inputImg.getRGB(i,j-1));
-				pixelMatrix[4]=new Color(inputImg.getRGB(i,j));
-				pixelMatrix[5]=new Color(inputImg.getRGB(i,j+1));
-				pixelMatrix[6]=new Color(inputImg.getRGB(i+1,j-1));
-				pixelMatrix[7]=new Color(inputImg.getRGB(i+1,j));
-				pixelMatrix[8]=new Color(inputImg.getRGB(i+1,j+1));
-				for(int k=0;k<9;k++){
-					R[k]=pixelMatrix[k].getRed();
-					B[k]=pixelMatrix[k].getBlue();
-					G[k]=pixelMatrix[k].getGreen();
-				}
-				Arrays.sort(R);
-				Arrays.sort(G);
-				Arrays.sort(B);
-				outputImg.setRGB(i,j,new Color(R[4],B[4],G[4]).getRGB());
-			}
-		}
-		return outputImg;
-
-	}
+	
 	public int convolution(Color[] pixelMatrix){
 		float[] data = {
 				(float)1/9,(float)1/9,(float)1/9,
