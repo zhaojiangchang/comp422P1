@@ -3,8 +3,6 @@ package Q1;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Arrays;
-
 import javax.imageio.ImageIO;
 
 public class EdgeDetection {
@@ -37,6 +35,12 @@ public class EdgeDetection {
 				pixelMatrix[7]=new Color(tempImg.getRGB(i+1,j));
 				pixelMatrix[8]=new Color(tempImg.getRGB(i+1,j+1));
 				int edge=(int) convolution(pixelMatrix);
+				if(edge<0){
+					edge = 0;
+				}
+				else if(edge>255){
+					edge = 255;
+				}
 				outputImg.setRGB(i,j,(edge<<16 | edge<<8 | edge));
 			}
 		}
