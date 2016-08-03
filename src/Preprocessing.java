@@ -4,12 +4,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.io.File;
 
 /**
  * Created by JackyChang on 16/8/2.
  */
 public class Preprocessing {
-    private BufferedImage inputImg,outputImg;
+    private static BufferedImage inputImg,outputImg;
     private Color[] pixelMatrix=new Color[9];
     private int[] R=new int[9];
     private int[] B=new int[9];
@@ -38,10 +39,10 @@ public class Preprocessing {
             (float)1/9,(float)1/9,(float)1/9,
             (float)1/9,(float)1/9,(float)1/9,
     };
-    private String filepath;
+    private File file;
 
-    public Preprocessing(String filepath) throws IOException{
-        this.filepath = filepath;
+    public Preprocessing(File file) throws IOException{
+        this.file = file;
         init();
 
     }
@@ -53,7 +54,7 @@ public class Preprocessing {
         R=new int[9];
         B=new int[9];
         G=new int[9];
-        this.inputImg = ImageIO.read(Preprocessing.class.getResource(this.filepath));
+        this.inputImg = ImageIO.read(file);
         this.outputImg=new BufferedImage(this.inputImg.getWidth(),this.inputImg.getHeight(),this.inputImg.TYPE_INT_RGB);
         this.width = this.inputImg.getWidth();
         this.height = this.inputImg.getHeight();

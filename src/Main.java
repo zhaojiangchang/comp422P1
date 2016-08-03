@@ -5,25 +5,26 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-
+import javax.swing.*;
 
 
 public class Main {
-	public static void main(String[] args) throws IOException {
-		BufferedImage outputImg;
+	private static BufferedImage outputImg;
 
-		String file = "hubble.tif";
-		String filterMethod = "mining";
-		Preprocessing  preprocessing  =  new Preprocessing (file);
-		if(filterMethod.equalsIgnoreCase("edge")){
-			Preprocessing  p  =  new Preprocessing (file);
-			BufferedImage img = p.filterImage("median");
-			preprocessing.setInputImg(img);
-			outputImg = preprocessing.filterImage(filterMethod);
+	public static void main(String[] args) throws IOException {
+		File file = null;
+		JFileChooser chooser = new JFileChooser("Image Chooser");
+		chooser.setCurrentDirectory(new File("./images"));
+		int f = chooser.showOpenDialog(null);
+		if(JFileChooser.APPROVE_OPTION == f){
+			file = chooser.getSelectedFile();
 		}else{
-			outputImg = preprocessing.filterImage(filterMethod);
+			System.exit(0);
 		}
-		File outputfile = new File("result/filter-"+file);
+		String filterMethod = "edge";
+		Preprocessing  preprocessing  =  new Preprocessing (file);
+		outputImg = preprocessing.filterImage(filterMethod);
+		File outputfile = new File("result/filter-");
 		ImageIO.write(outputImg,"tif", outputfile);
 
 	}
