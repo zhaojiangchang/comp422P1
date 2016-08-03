@@ -18,18 +18,15 @@ public class Main {
 		int f = chooser.showOpenDialog(null);
 		if(JFileChooser.APPROVE_OPTION == f){
 			file = chooser.getSelectedFile();
+			System.out.println(file.getAbsolutePath());
 		}else{
 			System.exit(0);
 		}
 		String filterMethod = "edge";
-		Preprocessing  preprocessing  =  new Preprocessing (file);
+		ImageProcess preprocessing  =  new ImageProcess(file);
 		outputImg = preprocessing.filterImage(filterMethod);
-		File outputfile = new File("result/filter-");
+		File outputfile = new File("result/"+filterMethod+"-"+ file.getName());
 		ImageIO.write(outputImg,"tif", outputfile);
-
-	}
-	public Main(){
-
 
 	}
 }
