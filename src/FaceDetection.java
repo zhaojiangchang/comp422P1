@@ -29,7 +29,7 @@ private Map<String, List<File>> allFiles;
     private PrintWriter testDatasetWriter;
     private final String comma = ",";
     private static WritableRaster raster;
-    private final int featureSize = 10;
+    private final int featureSize =10;
 
     public FaceDetection(){
         this.allFiles = new HashMap<String, List<File>>();
@@ -126,29 +126,47 @@ private Map<String, List<File>> allFiles;
 
     private double[] featureList(BufferedImage img){
         double [] features = new double[featureSize];
-//        left eyebrow
-        features[0] = getFeature(img.getSubimage(0,0,8,2));
-        //right eyebrow
-        features[1] = getFeature(img.getSubimage(0,11,8,2));
-        //left eye
-        features[2] = getFeature(img.getSubimage(0,0,7,7));
-        //right eye
-        features[3] = getFeature(img.getSubimage(6,0,7,7));
-        //nose
-        features[4] = getFeature(img.getSubimage(11,6,6,3));
-        //mouth
-        features[5] = getFeature(img.getSubimage(4,14,6,3));
-        //nose_bridge
-        features[6] = getFeature(img.getSubimage(8,2,2,9));
-        //cheek
-        features[7] = getFeature(img.getSubimage(0,7,6,6));
-        //face
-        features[8] = getFeature(img.getSubimage(0,0,19,19));
         //lower face
-        features[9] = getFeature(img.getSubimage(0,9,19,10));
+        features[0] = getFeatureMean(img.getSubimage(0,0,10,10));
+        //upper face
+        features[1] = getFeatureMean(img.getSubimage(10,0,8,10));
+        //left eye
+        features[2] = getFeatureMean(img.getSubimage(0,10,10,8));
+        //right eye
+        features[3] = getFeatureMean(img.getSubimage(0,10,10,8));
+        //left eye
+        features[4] = getFeatureSd(img.getSubimage(10,10,8,8));
+        //right eye
+        features[5] = getFeatureSd(img.getSubimage(10,10,8,8));
+        //nose
+        features[6] = getFeatureMean(img.getSubimage(11,6,6,3));
+        //nose
+        features[7] = getFeatureSd(img.getSubimage(11,6,6,3));
+        //lower face
+        features[8] = getFeatureSd(img.getSubimage(0,0,10,10));
+//        //upper face
+        features[9] = getFeatureSd(img.getSubimage(10,0,8,10));
+//        //mouth
+//        features[10] = getFeatureMean(img.getSubimage(5,5,5,5));
+//        //mouth
+//        features[11] = getFeatureSd(img.getSubimage(5,5,5,5));
+//        //nose_bridge
+//        features[12] = getFeatureMean(img.getSubimage(10,5,5,5));
+//        //nose_bridge
+//        features[13] = getFeatureSd(img.getSubimage(10,5,5,5));
+//        //nose_bridge
+//        features[14] = getFeatureMean(img.getSubimage(5,10,5,5));
+//        //nose_bridge
+//        features[15] = getFeatureSd(img.getSubimage(5,10,5,5));
+//        //nose_bridge
+//        features[16] = getFeatureMean(img.getSubimage(10,10,5,5));
+//        //nose_bridge
+//        features[17] = getFeatureSd(img.getSubimage(10,10,5,5));
+
+
         return features;
     }
-    private int getFeature(BufferedImage img){
+    private int getFeatureSd(BufferedImage img){
         double total = 0;
         List<Double>allPixRed = new ArrayList<Double>();
         for (int i = 0; i < img.getWidth()-1; i++) {
@@ -159,12 +177,27 @@ private Map<String, List<File>> allFiles;
                 total += c.getRed();
             }
         }
-        double evarage = total/(img.getHeight()*img.getWidth());
+        double mean = total/(img.getHeight()*img.getWidth());
         double sumSquare = 0;
         for(Double d: allPixRed){
-            sumSquare = (evarage-d)*(evarage-d);
+            sumSquare += (mean-d)*(mean-d);
         }
-        double sumSquareRoot = Math.sqrt(sumSquare);
-        return (int)sumSquareRoot;
+        double sd = Math.sqrt(sumSquare/(img.getHeight()*img.getWidth()));
+        return (int)sd;
+    }
+    private int getFeatureMean(BufferedImage img){
+        double total = 0;
+        List<Double>allPixRed = new ArrayList<Double>();
+        for (int i = 0; i < img.getWidth()-1; i++) {
+            for (int j = 0; j < img.getHeight()-1; j++) {
+                int rgb = img.getRGB(i,j);
+                Color c = new Color(img.getRGB(i,j));
+                allPixRed.add((double)c.getRed());
+                total += c.getRed();
+            }
+        }
+        double mean = total/(img.getHeight()*img.getWidth());
+
+        return (int)mean;
     }
 }
