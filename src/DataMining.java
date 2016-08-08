@@ -1,13 +1,10 @@
 import com.sun.deploy.util.StringUtils;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import java.io.IOException;
 import java.util.concurrent.Exchanger;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.classifiers.Classifier;
@@ -48,9 +45,10 @@ public class DataMining {
 
             NumericToNominal convertToNominal = new NumericToNominal();
             convertToNominal.setInputFormat(trainingInst);
+
             trainingInst = Filter.useFilter(trainingInst, convertToNominal);
             testInst = Filter.useFilter(testInst, convertToNominal);
-            
+
             J48 cls = new J48();
             cls.buildClassifier(trainingInst);
 
@@ -82,9 +80,12 @@ public class DataMining {
             trainingDatasetWriter.append("\n");
             testDataseWriter.append(featuresLine);
             testDataseWriter.append("\n");
-            for(int i = 0; i<2000; i++){
+            LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(files[0]));
+            lineNumberReader.skip(Long.MAX_VALUE);
+            int totalLines = lineNumberReader.getLineNumber();
+            for(int i = 0; i<totalLines-2; i++){
                 StringBuilder line = new StringBuilder();
-                int classLable = i/200;
+                String classLable = i / 200+"";
                 String text = null;
                 for(int j = 0; j<bufferedReaders.size(); j++){
                     text = bufferedReaders.get(j).readLine();

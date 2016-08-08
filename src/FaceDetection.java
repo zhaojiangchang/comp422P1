@@ -5,25 +5,21 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.util.concurrent.Exchanger;
+import java.io.PrintWriter;
+import java.util.*;
+import java.awt.image.WritableRaster;
+import java.util.List;
+
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.evaluation.ThresholdCurve;
-import weka.classifiers.trees.J48;
-import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.NumericToNominal;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.concurrent.Exchanger;
+import javax.swing.*;
+import javax.imageio.ImageIO;
 
 public class FaceDetection {
 private Map<String, List<File>> allFiles;
@@ -33,7 +29,7 @@ private Map<String, List<File>> allFiles;
     private PrintWriter testDatasetWriter;
     private final String comma = ",";
     private static WritableRaster raster;
-    private final int featureSize = 8;
+    private final int featureSize = 10;
 
     public FaceDetection(){
         this.allFiles = new HashMap<String, List<File>>();
@@ -61,7 +57,6 @@ private Map<String, List<File>> allFiles;
             files.add(file);
         }
         createCsvFile(writer, files, classlable);
-
         return files;
     }
     private void naiveBayesClassfier(){
@@ -74,45 +69,39 @@ private Map<String, List<File>> allFiles;
             trainingInst.setClassIndex(trainingInst.numAttributes()-1);
             NaiveBayes cls = new NaiveBayes();
             cls.buildClassifier(trainingInst);
-
             //setup test dataset
             testSource = new DataSource("result/faceDetection/testDataset.csv");
              Instances testInst = testSource.getDataSet();
             testInst.setClassIndex(testInst.numAttributes()-1);
-
             Evaluation eval = new Evaluation(trainingInst);
-            eval.evaluateModel(cls, trainingInst);
+            eval.evaluateModel(cls, testInst);
             System.out.println(eval.toSummaryString("\nResults\n======\n", false));
-
-
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-
-
-    private void createCsvFile(PrintWriter fileWriter, List<File>files, int classlable){
+    private void createCsvFile(PrintWriter fileWriter, List<File>files, int classlable) {
         String line = getFeaturesLine();
         fileWriter.append(line);
         fileWriter.append("\n");
         for(int i = 0; i<files.size();i++){
-            BufferedImage img = getImage(files.get(i));
-            int[] features = featureList(img);
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(files.get(i));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            double[] features = featureList(img);
             StringBuffer sb = new StringBuffer();
-//            sb.append(files.get(i).getName()+comma);
             for(int j = 0; j<features.length; j++){
                 sb.append(features[j]+comma);
             }
             sb.append(classlable);
             fileWriter.append(sb);
             fileWriter.append("\n");
-
-
         }
-
-
-
     }
     private BufferedImage getImage(File file){
         BufferedImage img = null;
@@ -135,33 +124,47 @@ private Map<String, List<File>> allFiles;
         return line.toString();
     }
 
-    private int[] featureList(BufferedImage img){
-        int [] features = new int[featureSize];
-        //left eyebrow
-        features[0] = getFeature(0,0,2,8, img);
+    private double[] featureList(BufferedImage img){
+        double [] features = new double[featureSize];
+//        left eyebrow
+        features[0] = getFeature(img.getSubimage(0,0,8,2));
         //right eyebrow
-        features[1] = getFeature(0,11,2,8,img);
+        features[1] = getFeature(img.getSubimage(0,11,8,2));
         //left eye
-        features[2] = getFeature(2,0,5,7, img);
+        features[2] = getFeature(img.getSubimage(0,0,7,7));
         //right eye
-        features[3] = getFeature(2,12,5,7,img);
+        features[3] = getFeature(img.getSubimage(6,0,7,7));
         //nose
-        features[4] = getFeature(6,11,4,6, img);
+        features[4] = getFeature(img.getSubimage(11,6,6,3));
         //mouth
-        features[5] = getFeature(5,14,4,10, img);
+        features[5] = getFeature(img.getSubimage(4,14,6,3));
         //nose_bridge
-        features[6] = getFeature(8,2,8,6,img);
+        features[6] = getFeature(img.getSubimage(8,2,2,9));
         //cheek
-        features[7] = getFeature(0,8,5,6,img);
+        features[7] = getFeature(img.getSubimage(0,7,6,6));
+        //face
+        features[8] = getFeature(img.getSubimage(0,0,19,19));
+        //lower face
+        features[9] = getFeature(img.getSubimage(0,9,19,10));
         return features;
     }
-    private int getFeature(int x, int y, int rows, int cols, BufferedImage img){
-        int[] pixelMatrix = new int[rows*cols];
-//        pixelMatrix = raster.getPixels(x,y,rows,cols,pixelMatrix);
-        for(int i =0; i<pixelMatrix.length; i++){
-//            System.out.println(pixelMatrix[i]);
-            pixelMatrix[i] = 1;
+    private int getFeature(BufferedImage img){
+        double total = 0;
+        List<Double>allPixRed = new ArrayList<Double>();
+        for (int i = 0; i < img.getWidth()-1; i++) {
+            for (int j = 0; j < img.getHeight()-1; j++) {
+                int rgb = img.getRGB(i,j);
+                Color c = new Color(img.getRGB(i,j));
+                allPixRed.add((double)c.getRed());
+                total += c.getRed();
+            }
         }
-        return 1;
+        double evarage = total/(img.getHeight()*img.getWidth());
+        double sumSquare = 0;
+        for(Double d: allPixRed){
+            sumSquare = (evarage-d)*(evarage-d);
+        }
+        double sumSquareRoot = Math.sqrt(sumSquare);
+        return (int)sumSquareRoot;
     }
 }
