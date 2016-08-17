@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class Main {
 	private static BufferedImage outputImg;
-	static int question =2;
+	static int question =3;
 
 	public static void main(String[] args) throws IOException {
 		File file = null;
