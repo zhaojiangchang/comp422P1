@@ -24,14 +24,12 @@ import weka.filters.unsupervised.attribute.NumericToNominal;
 public class DataMining {
     private File[] files = null;
     private final String comma = ",";
-
     public DataMining(File[] files){
         this.files = files;
         loadFiles();
         classfier();
     }
     private void classfier(){
-
         try{
             //setup training dataset
             DataSource trainSource = new DataSource("result/dataMining/trainingDataset.csv");
@@ -45,16 +43,19 @@ public class DataMining {
 
             NumericToNominal convertToNominal = new NumericToNominal();
             convertToNominal.setInputFormat(trainingInst);
+//
+            Instances newTrainingInst = Filter.useFilter(trainingInst, convertToNominal);
+            Instances newTestInst = Filter.useFilter(testInst, convertToNominal);
 
-            trainingInst = Filter.useFilter(trainingInst, convertToNominal);
-            testInst = Filter.useFilter(testInst, convertToNominal);
-
-            J48 cls = new J48();
-            cls.buildClassifier(trainingInst);
-
-            Evaluation eval = new Evaluation(trainingInst);
-            System.out.println(testInst.numAttributes());
-            eval.evaluateModel(cls, testInst);
+            J48 tree = new J48();
+            String[] options = new String[1];
+            options[0] = "-R";
+            tree.setOptions(options);
+            tree.buildClassifier(newTrainingInst);
+//            System.out.println(tree);
+            Evaluation eval = new Evaluation(newTrainingInst);
+//            System.out.println(trainingInst.numAttributes());
+            eval.evaluateModel(tree, newTrainingInst);
             System.out.println(eval.toSummaryString("\nResults\n======\n", false));
             System.out.println(eval.toMatrixString("Confusion Matrix"));
 
@@ -144,7 +145,7 @@ public class DataMining {
                 e.printStackTrace();
             }
         }
-        line.append("classlable");
+        line.append("class");
         return line.toString();
     }
 }
