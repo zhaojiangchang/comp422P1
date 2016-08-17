@@ -105,6 +105,51 @@ private Map<String, List<File>> allFiles;
             testInst.setClassIndex(testInst.numAttributes()-1);
             NaiveBayes cls = new NaiveBayes();
             cls.buildClassifier(trainingInst);
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println("====================================Evaluation Training Dataset==================================================");
+            System.out.println("evaluation training dataset:  ");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            //evaluation training
+            Evaluation evalTraining = new Evaluation(trainingInst);
+            evalTraining.evaluateModel(cls, trainingInst);
+            precision = evalTraining.precision(1);
+            recall = evalTraining.recall(1);
+            fmeasure = evalTraining.recall(1);
+            errorRate = evalTraining.errorRate();
+            tn = evalTraining.trueNegativeRate(1);
+            tp = evalTraining.truePositiveRate(1);
+
+//            System.out.println("P: "+precision);
+//            System.out.println("R: "+recall);
+//            System.out.println("ER: "+errorRate);
+//            System.out.println("TrueNegativeRate: "+tn);
+//            System.out.println("TruePositiveRate: "+tp);
+
+            System.out.println(evalTraining.toSummaryString("\nSummary\n======\n", false));
+            System.out.println(evalTraining.toClassDetailsString("\nClass Details\n======\n"));
+            System.out.println(evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n"));
+            //plot ROC curve
+            plotROCcurve(evalTraining, "TRAINING Dataset");
+            System.out.println("==========================================Done============================================================");
+
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println("====================================Evaluation Test Dataset==================================================");
+            System.out.println("evaluation test dataset:  ");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            //evaluation test
             Evaluation eval = new Evaluation(trainingInst);
             eval.evaluateModel(cls, testInst);
             precision = eval.precision(1);
@@ -114,17 +159,18 @@ private Map<String, List<File>> allFiles;
             tn = eval.trueNegativeRate(1);
             tp = eval.truePositiveRate(1);
 
-            System.out.println("P: "+precision);
-            System.out.println("R: "+recall);
-            System.out.println("ER: "+errorRate);
-            System.out.println("TrueNegativeRate: "+tn);
-            System.out.println("TruePositiveRate: "+tp);
+//            System.out.println("P: "+precision);
+//            System.out.println("R: "+recall);
+//            System.out.println("ER: "+errorRate);
+//            System.out.println("TrueNegativeRate: "+tn);
+//            System.out.println("TruePositiveRate: "+tp);
 
             System.out.println(eval.toSummaryString("\nSummary\n======\n", false));
             System.out.println(eval.toClassDetailsString("\nClass Details\n======\n"));
             System.out.println(eval.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n"));
             //plot ROC curve
-            plotROCcurve(eval);
+            plotROCcurve(eval,"TEST Dataset");
+            System.out.println("=======================================Done===========================================================");
 
 
 
@@ -132,14 +178,14 @@ private Map<String, List<File>> allFiles;
             e.printStackTrace();
         }
     }
-    private void plotROCcurve(Evaluation eval){
+    private void plotROCcurve(Evaluation eval, String dataset){
         // generate curve
         ThresholdCurve tc = new ThresholdCurve();
         int classIndex = 0;
         Instances result = tc.getCurve(eval.predictions(), classIndex);
         // plot curve
         ThresholdVisualizePanel vmc = new ThresholdVisualizePanel();
-        vmc.setROCString("(Area under ROC = " +
+        vmc.setROCString("(Area under ROC ("+dataset+") = " +
                 Utils.doubleToString(tc.getROCArea(result), 4) + ")");
         vmc.setName(result.relationName());
         PlotData2D tempd = new PlotData2D(result);
