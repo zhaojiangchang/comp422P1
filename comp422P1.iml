@@ -10,5 +10,7 @@
     <orderEntry type="library" name="jai_imageio" level="project" />
     <orderEntry type="library" name="weka" level="project" />
     <orderEntry type="library" name="weka-3.7.0" level="project" />
+    <orderEntry type="library" name="slf4j-log4j12-1.7.21" level="project" />
+    <orderEntry type="library" name="slf4j" level="project" />
   </component>
 </module>

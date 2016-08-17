@@ -13,6 +13,7 @@ import java.util.*;
 import java.awt.image.WritableRaster;
 import java.util.List;
 
+import weka.classifiers.Classifier;
 import weka.classifiers.evaluation.ThresholdCurve;
 import weka.core.Instance;
 import weka.core.Utils;
@@ -21,6 +22,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
+import weka.core.logging.Logger;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
 
@@ -39,6 +41,12 @@ private Map<String, List<File>> allFiles;
     private final String comma = ",";
     private static WritableRaster raster;
     private final int featureSize =20;
+    private double precision = 0;
+    private double recall  = 0;
+    private double fmeasure = 0;
+    private double errorRate = 0;
+    private double tn = 0;
+    private double tp = 0;
 
     public FaceDetection(){
         this.allFiles = new HashMap<String, List<File>>();
@@ -71,6 +79,7 @@ private Map<String, List<File>> allFiles;
     private void naiveBayesClassfier(){
         DataSource trainSource = null;
         DataSource testSource = null;
+
         try{
             //setup training dataset
             trainSource = new DataSource("result/faceDetection/trainingDataset.csv");
@@ -98,8 +107,22 @@ private Map<String, List<File>> allFiles;
             cls.buildClassifier(trainingInst);
             Evaluation eval = new Evaluation(trainingInst);
             eval.evaluateModel(cls, testInst);
-            System.out.println(eval.toSummaryString("\nResults\n======\n", false));
+            precision = eval.precision(1);
+            recall = eval.recall(1);
+            fmeasure = eval.recall(1);
+            errorRate = eval.errorRate();
+            tn = eval.trueNegativeRate(1);
+            tp = eval.truePositiveRate(1);
 
+            System.out.println("P: "+precision);
+            System.out.println("R: "+recall);
+            System.out.println("ER: "+errorRate);
+            System.out.println("TrueNegativeRate: "+tn);
+            System.out.println("TruePositiveRate: "+tp);
+
+            System.out.println(eval.toSummaryString("\nSummary\n======\n", false));
+            System.out.println(eval.toClassDetailsString("\nClass Details\n======\n"));
+            System.out.println(eval.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n"));
             //plot ROC curve
             plotROCcurve(eval);
 
