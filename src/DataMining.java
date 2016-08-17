@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import java.util.concurrent.Exchanger;
+
+import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -34,30 +36,81 @@ public class DataMining {
             //setup training dataset
             DataSource trainSource = new DataSource("result/dataMining/trainingDataset.csv");
             Instances trainingInst = trainSource.getDataSet();
+
+            ArffSaver training_saver = new ArffSaver();
+            training_saver.setInstances(trainingInst);
+            training_saver.setFile(new File("result/dataMining/trainingDataset.arff"));
+            training_saver.writeBatch();
+
+            trainSource = new DataSource("result/dataMining/trainingDataset.arff");
+            trainingInst = trainSource.getDataSet();
             trainingInst.setClassIndex(trainingInst.numAttributes()-1);
 
             //setup test dataset
             DataSource testSource = new DataSource("result/dataMining/testDataset.csv");
             Instances testInst = testSource.getDataSet();
+            ArffSaver test_saver = new ArffSaver();
+            test_saver.setInstances(testInst);
+            test_saver.setFile(new File("result/dataMining/testDataset.arff"));
+            test_saver.writeBatch();
+            testSource = new DataSource("result/dataMining/testDataset.arff");
+            testInst = testSource.getDataSet();
             testInst.setClassIndex(testInst.numAttributes()-1);
 
             NumericToNominal convertToNominal = new NumericToNominal();
             convertToNominal.setInputFormat(trainingInst);
 //
             Instances newTrainingInst = Filter.useFilter(trainingInst, convertToNominal);
-            Instances newTestInst = Filter.useFilter(testInst, convertToNominal);
 
             J48 tree = new J48();
-            String[] options = new String[1];
-            options[0] = "-R";
-            tree.setOptions(options);
+//            String[] options = new String[1];
+//            options[0] = "-R";
+//            tree.setOptions(options);
             tree.buildClassifier(newTrainingInst);
 //            System.out.println(tree);
-            Evaluation eval = new Evaluation(newTrainingInst);
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println("====================================Evaluation Training Dataset==================================================");
+            System.out.println("evaluation training dataset:  ");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            //evaluate training dataset
+            Evaluation evalTraing = new Evaluation(newTrainingInst);
 //            System.out.println(trainingInst.numAttributes());
-            eval.evaluateModel(tree, newTrainingInst);
-            System.out.println(eval.toSummaryString("\nResults\n======\n", false));
-            System.out.println(eval.toMatrixString("Confusion Matrix"));
+            evalTraing.evaluateModel(tree, newTrainingInst);
+            System.out.println(evalTraing.toSummaryString("\nResults\n======\n", false));
+            System.out.println(evalTraing.toMatrixString("Confusion Matrix"));
+            System.out.println("==========================================Done============================================================");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println("====================================Evaluation Test Dataset==================================================");
+            System.out.println("evaluation test dataset:  ");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+
+
+            Instances newTestInst= Filter.useFilter(testInst, convertToNominal);
+//            J48 tree2 = new J48();
+//            String[] options2 = new String[1];
+//            options2[0] = "-R";
+//            tree2.setOptions(options2);
+//            tree2.buildClassifier(newTrainingInst);
+            //evaluate test dataset
+            evalTraing = new Evaluation(newTrainingInst);
+//            System.out.println(trainingInst.numAttributes());
+            evalTraing.evaluateModel(tree, newTestInst);
+            System.out.println(evalTraing.toSummaryString("\nResults\n======\n", false));
+            System.out.println(evalTraing.toMatrixString("Confusion Matrix"));
+            System.out.println("=======================================Done===========================================================");
 
         }catch (Exception e){
             e.printStackTrace();
@@ -86,7 +139,7 @@ public class DataMining {
             int totalLines = lineNumberReader.getLineNumber();
             for(int i = 0; i<totalLines-2; i++){
                 StringBuilder line = new StringBuilder();
-                String classLable = i / 200+"";
+                String classLable = "c"+i / 200+"";
                 String text = null;
                 for(int j = 0; j<bufferedReaders.size(); j++){
                     text = bufferedReaders.get(j).readLine();

@@ -229,6 +229,7 @@ private Map<String, List<File>> allFiles;
         }
 
         for(int i = 0; i<files.size();i++){
+
             BufferedImage img = null;
             try {
                 img = ImageIO.read(files.get(i));
@@ -314,7 +315,7 @@ private Map<String, List<File>> allFiles;
         return features;
     }
 
-    private int getFeatureSd(BufferedImage img){
+    private double getFeatureSd(BufferedImage img){
         double total = 0;
         List<Double>allPixRed = new ArrayList<Double>();
         for (int i = 0; i < img.getWidth(); i++) {
@@ -331,10 +332,10 @@ private Map<String, List<File>> allFiles;
             sumSquare += (mean-d)*(mean-d);
         }
         double sd = Math.sqrt(sumSquare/(img.getHeight()*img.getWidth()-1));
-        sd = new BigDecimal(sd).setScale(2, RoundingMode.HALF_UP).doubleValue();
-        return (int)sd;
+//        sd = new BigDecimal(sd).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        return Math.round(sd);
     }
-    private int getFeatureMean(BufferedImage img){
+    private double getFeatureMean(BufferedImage img){
         double total = 0;
         List<Double>allPixRed = new ArrayList<Double>();
         for (int i = 0; i < img.getWidth(); i++) {
@@ -347,6 +348,6 @@ private Map<String, List<File>> allFiles;
         }
         double mean = total/((img.getHeight()*img.getWidth()-1));
         mean = new BigDecimal(mean).setScale(2, RoundingMode.HALF_UP).doubleValue();
-        return (int)mean;
+        return Math.round(mean);
     }
 }
