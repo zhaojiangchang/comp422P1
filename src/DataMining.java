@@ -1,5 +1,6 @@
 import com.sun.deploy.util.StringUtils;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,8 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NumericToNominal;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeVisualizer;
 
 /**
  * Created by JackyChang on 16/8/4.
@@ -29,10 +32,12 @@ public class DataMining {
     public String resultsTraining_summary= "";
     public String resultsTraining_tpfp= "";
     public String resultTraining_details = "";
+    public String resultTraining_tree = "";
 
     public String resultsTest_summary= "";
     public String resultsTest_tpfp= "";
     public String resultsTest_details= "";
+    public String resultsTest_tree= "";
 
     public DataMining(File[] files){
         this.files = files;
@@ -93,8 +98,28 @@ public class DataMining {
             resultsTraining_summary = evalTraining.toSummaryString("\nSummary\n======\n", false);
             resultTraining_details = evalTraining.toClassDetailsString("\nClass Details\n======\n");
             resultsTraining_tpfp = evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n");
+            resultTraining_tree = tree.toString();
             System.out.println(evalTraining.toSummaryString("\nResults\n======\n", false));
             System.out.println(evalTraining.toMatrixString("Confusion Matrix"));
+            System.out.println(tree.toString());
+            // display classifier
+            final javax.swing.JFrame jf =
+                    new javax.swing.JFrame("Weka Classifier Tree Visualizer(Training): J48");
+            jf.setSize(1000,800);
+            jf.getContentPane().setLayout(new BorderLayout());
+            TreeVisualizer tv = new TreeVisualizer(null,
+                    tree.graph(),
+                    new PlaceNode2());
+            jf.getContentPane().add(tv, BorderLayout.CENTER);
+            jf.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    jf.dispose();
+                }
+            });
+
+            jf.setVisible(true);
+            tv.fitToScreen();
+
             System.out.println("==========================================Done============================================================");
             System.out.println();
             System.out.println();
@@ -122,8 +147,30 @@ public class DataMining {
             resultsTest_summary = evalTraining.toSummaryString("\nSummary\n======\n", false);
             resultsTest_details = evalTraining.toClassDetailsString("\nClass Details\n======\n");
             resultsTest_tpfp = evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n");
+            resultsTest_tree = evalTraining.toString();
+
             System.out.println(evalTraining.toSummaryString("\nResults\n======\n", false));
             System.out.println(evalTraining.toMatrixString("Confusion Matrix"));
+
+
+            // display classifier
+            final javax.swing.JFrame jf2 =
+                    new javax.swing.JFrame("Weka Classifier Tree Visualizer(Test): J48");
+            jf2.setSize(1000,800);
+            jf2.getContentPane().setLayout(new BorderLayout());
+            TreeVisualizer tv2 = new TreeVisualizer(null,
+                    tree.graph(),
+                    new PlaceNode2());
+            jf2.getContentPane().add(tv2, BorderLayout.CENTER);
+            jf2.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    jf2.dispose();
+                }
+            });
+
+            jf2.setVisible(true);
+            tv2.fitToScreen();
+
             System.out.println("=======================================Done===========================================================");
 
         }catch (Exception e){

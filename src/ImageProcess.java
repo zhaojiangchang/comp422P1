@@ -17,7 +17,9 @@ public class ImageProcess {
     private int[] G=new int[9];
     private int width = 0;
     private int height = 0;
-    private int thresholder = 200;
+    private int thresholder = 0;
+    private float min = Float.MAX_VALUE;
+    private float max = Float.MIN_VALUE;
 
     private static final float []sobelx = {
             -1, 0, 1,
@@ -29,10 +31,16 @@ public class ImageProcess {
             0,  0,  0,
             1,  2,  1
     };
+
     private static final float[] enhancementFilter ={
             0,-1,0,
-            -1,5,-1,
+            -1,(float) 5,-1,
             0,-1,0,
+    };
+    private static final float[] faceDetectoinPreprocessing ={
+            0,-4,0,
+            -4,(float)17,-4,
+            0,-4,0,
     };
     private static final float[] meanFilter = {
             (float)1/9,(float)1/9,(float)1/9,
@@ -46,9 +54,13 @@ public class ImageProcess {
         init();
 
     }
+    public ImageProcess(){
+
+    }
     public void setThresholder(int value){
         this.thresholder =  value;
     }
+
     public void init()throws IOException{
         pixelMatrix=new Color[9];
         R=new int[9];
@@ -58,6 +70,7 @@ public class ImageProcess {
         this.outputImg=new BufferedImage(this.inputImg.getWidth(),this.inputImg.getHeight(),this.inputImg.TYPE_INT_RGB);
         this.width = this.inputImg.getWidth();
         this.height = this.inputImg.getHeight();
+        getMinMax();
 
     }
     public void setInputImg(BufferedImage image){
@@ -71,6 +84,32 @@ public class ImageProcess {
     }
     public BufferedImage getOutputImg(){
         return this.outputImg;
+    }
+
+
+    public void getMinMax() {
+        for (int i = 1; i < inputImg.getWidth() - 1; i++) {
+            for (int j = 1; j < inputImg.getHeight() - 1; j++) {
+                pixelMatrix[0] = new Color(inputImg.getRGB(i - 1, j - 1));
+                pixelMatrix[1] = new Color(inputImg.getRGB(i - 1, j));
+                pixelMatrix[2] = new Color(inputImg.getRGB(i - 1, j + 1));
+                pixelMatrix[3] = new Color(inputImg.getRGB(i, j - 1));
+                pixelMatrix[4] = new Color(inputImg.getRGB(i, j));
+                pixelMatrix[5] = new Color(inputImg.getRGB(i, j + 1));
+                pixelMatrix[6] = new Color(inputImg.getRGB(i + 1, j - 1));
+                pixelMatrix[7] = new Color(inputImg.getRGB(i + 1, j));
+                pixelMatrix[8] = new Color(inputImg.getRGB(i + 1, j + 1));
+                int d = convolution(pixelMatrix,enhancementFilter);
+                if(d>max){
+                    System.out.println(d+"   max  "+max);
+                    max = d;
+                }
+                if(d<min){
+                    System.out.println(d+"   min  "+min);
+                    min = d;
+                }
+            }
+        }
     }
 
     public BufferedImage filterImage(String method){
@@ -117,6 +156,17 @@ public class ImageProcess {
                         break;
                     case "enhancement":
                         edge = convolution(pixelMatrix,enhancementFilter);
+//                        edge = scaleRGB(edge);
+                        if(edge>255){
+                            edge = 255;
+                        }
+                        else if(edge<0){
+                            edge = 0;
+                        }
+                        outputImg.setRGB(i,j,((edge<<16 | edge<<8 | edge)));
+                        break;
+                    case "faceDetectionPreprocessing":
+                        edge = convolution(pixelMatrix,faceDetectoinPreprocessing);
                         if(edge>255){
                             edge = 255;
                         }
@@ -148,6 +198,11 @@ public class ImageProcess {
                 toReturn += ((float)pixelMatrix[i].getRed())*filter[i];
         }
         return (int)toReturn;
+    }
+    public int scaleRGB(int value) {
+        System.out.println(min+"      "+max);
+        float scale = (value - min) * 1.0f / (max - min);
+        return  (int)(scale * 255);
     }
 
 }

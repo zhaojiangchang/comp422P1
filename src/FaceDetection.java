@@ -248,7 +248,7 @@ private Map<String, List<File>> allFiles;
                 e.printStackTrace();
             }
 
-            double[] features = featureList(img);
+            double[] features = featureList(img, files.get(i));
             StringBuffer sb = new StringBuffer();
             for(int j = 0; j<features.length; j++){
                 sb.append(features[j]+comma);
@@ -279,7 +279,15 @@ private Map<String, List<File>> allFiles;
         return line.toString();
     }
 
-    private double[] featureList(BufferedImage img){
+    private double[] featureList(BufferedImage img, File file) {
+        ImageProcess fd = null;
+        try {
+            fd = new ImageProcess(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        img = fd.filterImage("faceDetectionPreprocessing");
+
         double [] features = new double[featureSize];
         //big square
         features[0] = getFeatureMean(img.getSubimage(0,0,19,19));

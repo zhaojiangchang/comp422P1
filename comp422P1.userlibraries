@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="jai_imageio">
+    <archive path="/Users/JackyChang/Documents/workspace2/comp422P1/lib/jai_imageio.jar" />
+  </library>
+  <library name="slf4j">
+    <archive path="/Users/JackyChang/Documents/workspace2/comp422P1/lib/slf4j.jar" />
+  </library>
+  <library name="slf4j-log4j12-1.7.21" />
+  <library name="weka" />
+  <library name="weka-3.7.0">
+    <archive path="/Users/JackyChang/Documents/workspace2/comp422P1/lib/weka-3.7.0.jar" />
+  </library>
+</eclipse-userlibraries>
+
