@@ -167,8 +167,8 @@ public class GUI extends JPanel
 //                    System.exit(0);
                 }
                 DataMining dataMining = new DataMining(files);
-                String result = dataMining.resultsTraining_summary + "\n"+ dataMining.resultTraining_details + "\n"+dataMining.resultsTraining_tpfp+
-                        dataMining.resultsTest_summary+"\n"+dataMining.resultsTest_details+"\n"+dataMining.resultsTest_tpfp;
+                String result = dataMining.resultsTraining_summary + "\n"+ dataMining.resultTraining_details + "\n"+dataMining.resultsTraining_tpfp+"\n "+dataMining.resultTraining_tree+"\n"+
+                        dataMining.resultsTest_summary+"\n"+dataMining.resultsTest_details+"\n"+dataMining.resultsTest_tpfp+"\n"+dataMining.resultsTest_tree;
                 commentTextArea.setText(result);
             }
         }

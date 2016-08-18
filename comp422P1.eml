@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inherit-compiler-output="true" inheritJdk="true">
+	<output-test url="file://$MODULE_DIR$/out/test/comp422P1"/>
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="comp422P1.userlibraries" scope="COMPILE">
+		<relative-module-cls project-related="file://$PROJECT_DIR$/comp422P1.userlibraries"/>
+	</lib>
+	<lib name="jai_imageio.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/jai_imageio.jar!/"/>
+	</lib>
+	<lib name="slf4j.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/slf4j.jar!/"/>
+	</lib>
+	<lib name="weka-3.7.0.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/weka-3.7.0.jar!/"/>
+	</lib>
+</component>
