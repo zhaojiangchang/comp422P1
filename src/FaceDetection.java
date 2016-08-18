@@ -47,6 +47,13 @@ private Map<String, List<File>> allFiles;
     private double errorRate = 0;
     private double tn = 0;
     private double tp = 0;
+    public String resultsTraining_summary= "";
+    public String resultsTraining_tpfp= "";
+    public String resultTraining_details = "";
+
+    public String resultsTest_summary= "";
+    public String resultsTest_tpfp= "";
+    public String resultsTest_details= "";
 
     public FaceDetection(){
         this.allFiles = new HashMap<String, List<File>>();
@@ -130,7 +137,9 @@ private Map<String, List<File>> allFiles;
 //            System.out.println("ER: "+errorRate);
 //            System.out.println("TrueNegativeRate: "+tn);
 //            System.out.println("TruePositiveRate: "+tp);
-
+            resultsTraining_summary = evalTraining.toSummaryString("\nSummary\n======\n", false);
+            resultTraining_details = evalTraining.toClassDetailsString("\nClass Details\n======\n");
+            resultsTraining_tpfp = evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n");
             System.out.println(evalTraining.toSummaryString("\nSummary\n======\n", false));
             System.out.println(evalTraining.toClassDetailsString("\nClass Details\n======\n"));
             System.out.println(evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n"));
@@ -164,7 +173,9 @@ private Map<String, List<File>> allFiles;
 //            System.out.println("ER: "+errorRate);
 //            System.out.println("TrueNegativeRate: "+tn);
 //            System.out.println("TruePositiveRate: "+tp);
-
+            resultsTest_summary = eval.toSummaryString("\nSummary\n======\n", false);
+            resultsTest_details = eval.toClassDetailsString("\nClass Details\n======\n");
+            resultsTest_tpfp = eval.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n");
             System.out.println(eval.toSummaryString("\nSummary\n======\n", false));
             System.out.println(eval.toClassDetailsString("\nClass Details\n======\n"));
             System.out.println(eval.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n"));
