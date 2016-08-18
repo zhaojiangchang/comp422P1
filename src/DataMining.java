@@ -26,6 +26,14 @@ import weka.filters.unsupervised.attribute.NumericToNominal;
 public class DataMining {
     private File[] files = null;
     private final String comma = ",";
+    public String resultsTraining_summary= "";
+    public String resultsTraining_tpfp= "";
+    public String resultTraining_details = "";
+
+    public String resultsTest_summary= "";
+    public String resultsTest_tpfp= "";
+    public String resultsTest_details= "";
+
     public DataMining(File[] files){
         this.files = files;
         loadFiles();
@@ -79,11 +87,14 @@ public class DataMining {
             System.out.println();
             System.out.println();
             //evaluate training dataset
-            Evaluation evalTraing = new Evaluation(newTrainingInst);
+            Evaluation evalTraining = new Evaluation(newTrainingInst);
 //            System.out.println(trainingInst.numAttributes());
-            evalTraing.evaluateModel(tree, newTrainingInst);
-            System.out.println(evalTraing.toSummaryString("\nResults\n======\n", false));
-            System.out.println(evalTraing.toMatrixString("Confusion Matrix"));
+            evalTraining.evaluateModel(tree, newTrainingInst);
+            resultsTraining_summary = evalTraining.toSummaryString("\nSummary\n======\n", false);
+            resultTraining_details = evalTraining.toClassDetailsString("\nClass Details\n======\n");
+            resultsTraining_tpfp = evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n");
+            System.out.println(evalTraining.toSummaryString("\nResults\n======\n", false));
+            System.out.println(evalTraining.toMatrixString("Confusion Matrix"));
             System.out.println("==========================================Done============================================================");
             System.out.println();
             System.out.println();
@@ -105,11 +116,14 @@ public class DataMining {
 //            tree2.setOptions(options2);
 //            tree2.buildClassifier(newTrainingInst);
             //evaluate test dataset
-            evalTraing = new Evaluation(newTrainingInst);
+            evalTraining = new Evaluation(newTrainingInst);
 //            System.out.println(trainingInst.numAttributes());
-            evalTraing.evaluateModel(tree, newTestInst);
-            System.out.println(evalTraing.toSummaryString("\nResults\n======\n", false));
-            System.out.println(evalTraing.toMatrixString("Confusion Matrix"));
+            evalTraining.evaluateModel(tree, newTestInst);
+            resultsTest_summary = evalTraining.toSummaryString("\nSummary\n======\n", false);
+            resultsTest_details = evalTraining.toClassDetailsString("\nClass Details\n======\n");
+            resultsTest_tpfp = evalTraining.toMatrixString("\nConfusion Matrix: false positives and false negatives\n======\n");
+            System.out.println(evalTraining.toSummaryString("\nResults\n======\n", false));
+            System.out.println(evalTraining.toMatrixString("Confusion Matrix"));
             System.out.println("=======================================Done===========================================================");
 
         }catch (Exception e){
