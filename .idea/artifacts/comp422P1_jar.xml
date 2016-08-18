@@ -3,11 +3,11 @@
     <output-path>$PROJECT_DIR$/out/artifacts/comp422P1_jar</output-path>
     <root id="archive" name="comp422P1.jar">
       <element id="module-output" name="comp422P1" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/common-lang3.jar" path-in-jar="/" />
       <element id="library" level="module" name="comp422P1.userlibraries" module-name="comp422P1" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/common-lang3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jai_imageio.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/slf4j.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/weka-3.7.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jai_imageio.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
